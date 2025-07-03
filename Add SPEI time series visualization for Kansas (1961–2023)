@@ -1,0 +1,36 @@
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# Load the data from the new file path
+data <- read.csv("F:/Kansas State University/output-Kansas/SPI/spei12_kansas.csv")
+
+# Clean the data by removing rows with NA values
+data <- na.omit(data)
+
+# Aggregate the data by year to ensure all years are included
+data_yearly <- data %>%
+  group_by(year) %>%
+  summarize(spei = mean(spei, na.rm = TRUE))
+
+# Save the plot to the updated path
+plot_path <- "F:/Kansas State University/output-Kansas/SPI/spei12_all-years-plot.png"
+
+png(filename = plot_path, width = 800, height = 600)
+ggplot(data_yearly, aes(x = year, y = spei)) +
+  geom_col(aes(fill = spei >= 0), show.legend = FALSE) +
+  scale_fill_manual(values = c("red", "blue")) + # Red for negative, blue for positive
+  labs(title = "SPEI Index Over Time", x = "Year", y = "SPEI") +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(min(data_yearly$year), max(data_yearly$year), by = 1)) + # Show all years on x-axis
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) # Rotate x-axis labels for better readability
+dev.off()
+
+# Also plot the data in RStudio
+ggplot(data_yearly, aes(x = year, y = spei)) +
+  geom_col(aes(fill = spei >= 0), show.legend = FALSE) +
+  scale_fill_manual(values = c("red", "blue")) + # Red for negative, blue for positive
+  labs(title = "SPEI Index Over Time", x = "Year", y = "SPEI") +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(min(data_yearly$year), max(data_yearly$year), by = 1)) + # Show all years on x-axis
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) # Rotate x-axis labels for better readability
